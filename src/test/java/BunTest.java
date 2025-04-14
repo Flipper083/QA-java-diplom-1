@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 public class BunTest {
 
     @Test
-    public void getNameReturnInValidValue() {
+    public void getNameReturnInValidValueTest() {
         Bun bun = new Bun("Name", 10); // Создаем объект Bun с именем и ценой
         String expectedName = "Name";
         String actualName = bun.getName();
@@ -15,7 +15,7 @@ public class BunTest {
     }
 
     @Test
-    public void getPriceReturnInValidValue() {
+    public void getPriceReturnInValidValueTest() {
         Bun bun = new Bun("Name", 10); // Создаем объект Bun с именем и ценой
         float expectedPrise = 10;
         float actualPrise = bun.getPrice();
@@ -23,7 +23,7 @@ public class BunTest {
     }
 
     @Test
-    public void getPriceReturnNotNull() {
+    public void getPriceReturnNotNullTest() {
         Bun bun = new Bun("Name", 10);
         float actualPrise = bun.getPrice();
         MatcherAssert.assertThat(actualPrise, notNullValue()); // Проверяем, что цена не равна null
