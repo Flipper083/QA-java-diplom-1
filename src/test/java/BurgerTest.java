@@ -7,7 +7,9 @@ import praktikum.Bun;
 import praktikum.Burger;
 import praktikum.Ingredient;
 import praktikum.IngredientType;
+
 import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -17,17 +19,19 @@ public class BurgerTest {
     @Mock
     Bun bun; // Мок-объект для класса Bun
     @Mock
-    Ingredient ingredient; // Мок-объект для класса Ingredient
+    Ingredient ingredient1; // Мок-объект для класса Ingredient
+    @Mock
+    Ingredient ingredient2; // Мок-объект для класса Ingredient
 
     // Тест проверяет, что метод getPrice() возвращает правильную цену
     @Test
     public void getPriceShouldReturnValidValueTest() {
         float price = 100; // Устанавливаем цену
         Mockito.when(bun.getPrice()).thenReturn(price);
-        Mockito.when(ingredient.getPrice()).thenReturn(price);
+        Mockito.when(ingredient1.getPrice()).thenReturn(price);
 
         burger.setBuns(bun);
-        burger.addIngredient(ingredient);
+        burger.addIngredient(ingredient1);
 
         float expectedPrice = price * 2 + price; // Ожидаемая цена
         float actualPrice = burger.getPrice(); // Получаем фактическую цену
@@ -43,11 +47,11 @@ public class BurgerTest {
 
         burger.setBuns(bun);
 
-        Mockito.when(ingredient.getType()).thenReturn(IngredientType.FILLING);
-        Mockito.when(ingredient.getName()).thenReturn("dinosaur");
-        Mockito.when(ingredient.getPrice()).thenReturn(300f);
+        Mockito.when(ingredient1.getType()).thenReturn(IngredientType.FILLING);
+        Mockito.when(ingredient1.getName()).thenReturn("dinosaur");
+        Mockito.when(ingredient1.getPrice()).thenReturn(300f);
 
-        burger.addIngredient(ingredient);
+        burger.addIngredient(ingredient1);
 
         // Ожидаемый рецепт
         String expectedReceipt = "(==== black bun ====)\r\n= filling dinosaur =\r\n(==== black bun ====)" +
@@ -69,9 +73,9 @@ public class BurgerTest {
     // Тест проверяет, что метод addIngredient() корректно добавляет ingredient
     @Test
     public void addIngredientShouldAddIngredientToListTest() {
-        burger.addIngredient(ingredient);
+        burger.addIngredient(ingredient1);
 
-        List<Ingredient> expected = List.of(ingredient); // Ожидаемый список ингредиентов
+        List<Ingredient> expected = List.of(ingredient1); // Ожидаемый список ингредиентов
         List<Ingredient> actual = burger.ingredients; // Получаем фактический список ингредиентов
 
         assertEquals("Incorrect addition of an ingredient in the list", expected, actual); // Сравниваем ожидаемый и фактический списки
@@ -80,7 +84,7 @@ public class BurgerTest {
     // Тест проверяет, что метод removeIngredient() корректно удаляет ingredient
     @Test
     public void removeIngredientShouldRemoveIngredientFromListTest() {
-        burger.addIngredient(ingredient);
+        burger.addIngredient(ingredient1);
         burger.removeIngredient(0);
 
         List<Ingredient> actual = burger.ingredients; // Получаем фактический список ингредиентов
@@ -91,13 +95,25 @@ public class BurgerTest {
     // Тест проверяет, что метод moveIngredient() корректно перемещает ingredient
     @Test
     public void moveIngredientShouldMoveIngredientInListTest() {
-        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "sour cream", 200)); // Добавляем соус
-        burger.addIngredient(new Ingredient(IngredientType.FILLING, "sausage", 300)); // Добавляем начинку
-        burger.moveIngredient(0, 1); // Перемещаем соус на позицию 1
+        // Устанавливаем поведение для ingredient1 и ingredient2
+        Mockito.when(ingredient1.getName()).thenReturn("sour cream");
+        Mockito.when(ingredient1.getType()).thenReturn(IngredientType.SAUCE); // Устанавливаем тип для ingredient1
+        Mockito.when(ingredient2.getName()).thenReturn("sausage");
+        Mockito.when(ingredient2.getType()).thenReturn(IngredientType.FILLING); // Устанавливаем тип для ingredient2
 
-        String expectedName = "sour cream"; // Ожидаемое имя ингредиента на позиции 1
-        String actualName = burger.ingredients.get(1).name; // Получаем фактическое имя ингредиента на позиции 1
+        // Добавляем ингредиенты
+        burger.addIngredient(ingredient1); // Добавляем соус
+        burger.addIngredient(ingredient2); // Добавляем начинку
 
-        assertEquals("Incorrect movement of an ingredient in the list", expectedName, actualName); // Сравниваем ожидаемое и фактическое имя
+        // Перемещаем соус на позицию 1 (изначально он на позиции 0)
+        burger.moveIngredient(0, 1);
+
+        // Ожидаемое имя ингредиента на позиции 1
+        String expectedName = "sauce"; // Изменяем ожидаемое имя на "sauce", так как это тип ingredient1
+        // Получаем фактическое имя ингредиента на позиции 1
+        String actualName = burger.ingredients.get(1).getName();
+
+        // Сравниваем ожидаемое и фактическое имя
+        assertEquals("Incorrect movement of an ingredient in the list", expectedName, actualName);
     }
 }
